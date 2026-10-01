@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F3A5C">
+<title>Pilihan Tempat PKL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --baja: #1F3A5C; --baja-2: #2F5D8A; --baja-muda: #E6EEF6;
+    --latar: #EDF0F3; --kartu: #FFFFFF;
+    --tinta: #1C2733; --redup: #5B6776; --garis: #D5DBE2;
+    --kuning: #F2B705; --kuning-muda: #FFF6D6;
+    --hijau: #1E7F4F; --hijau-muda: #E3F4EA;
+    --merah: #B3322B; --merah-muda: #FBE9E7;
+    --radius: 12px;
+    --font: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-judul: "Barlow Condensed", "Barlow", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--latar); color: var(--tinta); font-size: 16px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--kuning); outline-offset: 2px; }
+  .hidden { display: none !important; }
+
+  .header { background: var(--baja); color: #fff; padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 0; }
+  .header-isi { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; }
+  .header h1 { font-family: var(--font-judul); font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+  .header small { display: block; opacity: .75; font-size: .85rem; }
+  .strip { height: 6px; background: repeating-linear-gradient(-45deg, var(--kuning) 0 12px, #1C2733 12px 24px); }
+  .btn-keluar { background: transparent; border: 1.5px solid rgba(255,255,255,.5); color: #fff; border-radius: 8px; padding: 6px 12px; font-size: .9rem; cursor: pointer; }
+
+  main { max-width: 640px; margin: 0 auto; padding: 20px 16px 120px; }
+
+  /* Login */
+  .panel { background: var(--kartu); border-radius: var(--radius); padding: 22px 20px; border: 1px solid var(--garis); }
+  .panel h2 { font-family: var(--font-judul); font-size: 1.6rem; margin-bottom: 4px; }
+  .ket { color: var(--redup); font-size: .95rem; }
+  .field { margin-top: 16px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 6px; font-size: .95rem; }
+  .input { width: 100%; padding: 13px 14px; font-size: 1.05rem; border: 1.5px solid var(--garis); border-radius: 10px; background: #fff; }
+  .input:focus { border-color: var(--baja-2); outline: none; box-shadow: 0 0 0 3px rgba(47,93,138,.2); }
+  .bantuan { font-size: .85rem; color: var(--redup); margin-top: 4px; }
+  .pw-wrap { position: relative; }
+  .pw-wrap .input { padding-right: 110px; }
+  .pw-toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--baja-2); font-weight: 600; padding: 8px; cursor: pointer; font-size: .9rem; }
+  .pesan-error { background: var(--merah-muda); color: var(--merah); padding: 10px 12px; border-radius: 8px; font-size: .92rem; margin-top: 14px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+  .btn:disabled { cursor: not-allowed; opacity: .55; }
+  .btn-utama { background: var(--baja); color: #fff; }
+  .btn-utama:hover:not(:disabled) { background: var(--baja-2); }
+  .btn-garis { background: #fff; color: var(--baja); border: 1.5px solid var(--baja); }
+  .btn-penuh { width: 100%; margin-top: 20px; }
+
+  /* Dashboard kepala */
+  .sapa { font-family: var(--font-judul); font-size: 1.7rem; line-height: 1.15; }
+  .sapa-sub { color: var(--redup); font-size: .95rem; margin-bottom: 14px; }
+  .banner { border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; border: 1.5px solid; font-size: .95rem; }
+  .banner b { display: block; font-size: 1rem; }
+  .banner.buka { background: var(--kuning-muda); border-color: var(--kuning); }
+  .banner.tutup { background: var(--baja-muda); border-color: var(--baja-2); }
+  .banner.hasil { background: var(--hijau-muda); border-color: var(--hijau); }
+  .banner.manual { background: var(--merah-muda); border-color: var(--merah); }
+  .banner .tempat { font-family: var(--font-judul); font-size: 1.7rem; font-weight: 700; color: var(--hijau); line-height: 1.15; margin: 4px 0; }
+
+  .skor { background: var(--kartu); border: 1px solid var(--garis); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; }
+  .skor summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; }
+  .skor summary::-webkit-details-marker { display: none; }
+  .skor .angka-besar { font-family: var(--font-judul); font-size: 2rem; font-weight: 700; color: var(--baja); line-height: 1; }
+  .skor .buka-rinci { color: var(--baja-2); font-weight: 600; font-size: .9rem; }
+  .rinci { margin-top: 12px; display: grid; grid-template-columns: 1fr auto auto; gap: 6px 14px; font-size: .92rem; }
+  .rinci span:nth-child(3n+2), .rinci span:nth-child(3n) { text-align: right; }
+  .rinci .kepala { color: var(--redup); font-size: .82rem; }
+
+  /* Tab */
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; background: #DDE3EA; border-radius: 10px; padding: 4px; gap: 4px; position: sticky; top: 0; z-index: 6; }
+  .tab { border: none; background: transparent; padding: 10px 8px; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--redup); }
+  .tab[aria-selected="true"] { background: #fff; color: var(--baja); box-shadow: 0 1px 2px rgba(28,39,51,.12); }
+
+  /* Pilihan saya */
+  .pilihan-list { list-style: none; display: grid; gap: 8px; margin-top: 14px; }
+  .item { display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center; background: var(--kartu); border: 1px solid var(--garis); border-radius: var(--radius); padding: 10px 10px 10px 12px; }
+  .item .nomor { width: 34px; height: 34px; border-radius: 50%; background: var(--baja); color: #fff; font-family: var(--font-judul); font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; }
+  .item.pertama .nomor { background: var(--kuning); color: var(--tinta); }
+  .item .nama { font-weight: 600; line-height: 1.25; }
+  .item .info { font-size: .85rem; color: var(--redup); }
+  .aksi { display: flex; gap: 4px; }
+  .ikon { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--garis); background: #fff; cursor: pointer; font-size: 1rem; line-height: 1; }
+  .ikon:disabled { opacity: .35; cursor: not-allowed; }
+  .ikon.hapus { color: var(--merah); }
+  .kosong { text-align: center; color: var(--redup); padding: 26px 12px; background: var(--kartu); border: 1.5px dashed var(--garis); border-radius: var(--radius); margin-top: 14px; }
+  .kosong .btn { margin-top: 12px; }
+  .progres { font-size: .9rem; color: var(--redup); margin-top: 14px; }
+  .progres b { color: var(--tinta); }
+
+  .persetujuan { margin-top: 18px; background: var(--kartu); border: 1px solid var(--garis); border-radius: var(--radius); padding: 14px 16px; }
+  .persetujuan h3 { font-size: 1rem; }
+  .cek-setuju { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: .92rem; cursor: pointer; }
+  .cek-setuju input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--baja); }
+
+  /* Daftar tempat */
+  .alat { margin-top: 14px; }
+  .cari { width: 100%; padding: 12px 14px 12px 42px; font-size: 1rem; border: 1.5px solid var(--garis); border-radius: 10px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%235B6776' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='9' cy='9' r='6'/%3E%3Cpath d='m14 14 4 4'/%3E%3C/svg%3E") no-repeat 13px center; }
+  .cari:focus { border-color: var(--baja-2); outline: none; box-shadow: 0 0 0 3px rgba(47,93,138,.2); }
+  .chips { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .chip { border: 1.5px solid var(--garis); background: #fff; border-radius: 99px; padding: 6px 12px; font-size: .88rem; font-weight: 500; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--baja); border-color: var(--baja); color: #fff; }
+  .catatan { font-size: .82rem; color: var(--redup); margin-top: 10px; }
+
+  .daftar { display: grid; gap: 10px; margin-top: 12px; }
+  .kartu { background: var(--kartu); border: 1px solid var(--garis); border-radius: var(--radius); padding: 14px; }
+  .kartu.dipilih { border: 2px solid var(--baja-2); }
+  .kartu h4 { font-size: 1.05rem; font-weight: 600; line-height: 1.3; }
+  .lencana { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .lencana span { font-size: .78rem; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: #EEF1F4; color: var(--redup); }
+  .lencana .dekat { background: var(--baja-muda); color: var(--baja); }
+  .kartu .desk { font-size: .88rem; color: var(--redup); margin-top: 6px; }
+  .statistik { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; text-align: center; }
+  .statistik div { background: #F5F7F9; border-radius: 8px; padding: 6px 4px; }
+  .statistik b { display: block; font-family: var(--font-judul); font-size: 1.3rem; line-height: 1.1; }
+  .statistik small { font-size: .75rem; color: var(--redup); }
+  .peluang { font-size: .88rem; padding: 8px 10px; border-radius: 8px; margin-bottom: 12px; }
+  .peluang.besar { background: var(--hijau-muda); color: var(--hijau); }
+  .peluang.bersaing { background: var(--kuning-muda); color: #6B5200; }
+  .peluang.sulit { background: var(--merah-muda); color: var(--merah); }
+  .kartu .btn { width: 100%; }
+
+  /* Bar simpan */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: #fff; border-top: 1px solid var(--garis); padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 10px); }
+  .bar-isi { max-width: 640px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
+  .bar-status { flex: 1; font-size: .88rem; color: var(--redup); line-height: 1.3; }
+  .bar-status b { display: block; color: var(--tinta); font-size: .95rem; }
+  .bar-status.kotor b { color: #8A6100; }
+  .bar .btn { flex: none; }
+
+  /* Overlay & toast */
+  .overlay { position: fixed; inset: 0; z-index: 50; background: rgba(28,39,51,.62); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .overlay-kotak { background: #fff; border-radius: var(--radius); padding: 24px 22px; text-align: center; max-width: 330px; width: 100%; }
+  .overlay-kotak.padat { border-top: 6px solid var(--kuning); }
+  .spinner { width: 42px; height: 42px; border-radius: 50%; border: 4px solid #E4E8ED; border-top-color: var(--baja); margin: 0 auto 14px; animation: putar .8s linear infinite; }
+  @keyframes putar { to { transform: rotate(360deg); } }
+  .overlay p { font-weight: 600; }
+  .overlay .detail { color: var(--redup); margin-top: 6px; font-size: .92rem; }
+  .overlay .percobaan { display: inline-block; margin-top: 10px; padding: 3px 10px; border-radius: 99px; background: #FFF3C4; color: #6B5200; font-weight: 600; font-size: .85rem; }
+  .toast { position: fixed; left: 16px; right: 16px; z-index: 60; bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); max-width: 560px; margin: 0 auto; padding: 14px 16px; border-radius: 10px; color: #fff; font-weight: 500; background: var(--tinta); transform: translateY(200%); opacity: 0; transition: transform .25s ease, opacity .25s; }
+  .toast.tampil { transform: translateY(0); opacity: 1; }
+  .toast.sukses { background: var(--hijau); }
+  .toast.gagal { background: var(--merah); }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-isi">
+    <div><h1>Pilihan Tempat PKL</h1><small id="namaSekolah"></small></div>
+    <button id="btnKeluar" class="btn-keluar hidden" type="button">Keluar</button>
+  </div>
+  <div class="strip"></div>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <section id="viewLogin" class="panel">
+    <h2>Masuk</h2>
+    <p class="ket">Gunakan NISN dan tanggal lahir Anda.</p>
+    <div id="loginError" class="pesan-error hidden" role="alert"></div>
+    <form id="formLogin" novalidate>
+      <div class="field">
+        <label for="nisn">NISN</label>
+        <input id="nisn" class="input" type="text" inputmode="numeric" autocomplete="username" placeholder="Contoh: 0081234567">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw-wrap">
+          <input id="password" class="input" type="password" inputmode="numeric" autocomplete="current-password" maxlength="10" placeholder="DDMMYYYY">
+          <button type="button" id="pwToggle" class="pw-toggle">Lihat</button>
+        </div>
+        <div class="bantuan">Tanggal lahir 8 angka. Lahir 5 Januari 2008 ditulis 05012008.</div>
+      </div>
+      <button id="btnMasuk" type="submit" class="btn btn-utama btn-penuh">Masuk</button>
+    </form>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="viewDashboard" class="hidden">
+    <h2 class="sapa" id="sapa"></h2>
+    <p class="sapa-sub" id="sapaSub"></p>
+    <div id="banner"></div>
+
+    <details class="skor" id="kotakSkor">
+      <summary>
+        <div><div class="ket">Skor prioritas Anda</div><div class="angka-besar" id="skorAngka">0</div></div>
+        <span class="buka-rinci">Lihat rincian</span>
+      </summary>
+      <div class="rinci" id="rinciSkor"></div>
+      <p class="catatan">Jika peminat sebuah tempat melebihi kuota, skor tertinggi didahulukan. Jika skor sama, siswa yang rumahnya lebih dekat didahulukan, lalu diundi.</p>
+    </details>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabPilihan" aria-selected="true">Pilihan Saya</button>
+      <button class="tab" role="tab" id="tabDaftar" aria-selected="false">Daftar Tempat</button>
+    </div>
+
+    <!-- Tab: Pilihan saya -->
+    <div id="panelPilihan">
+      <div id="isiPilihan"></div>
+      <div id="kotakPersetujuan" class="persetujuan">
+        <h3>Persetujuan orang tua/wali</h3>
+        <p class="ket">Isi bersama orang tua/wali. Pastikan semua tempat di atas sanggup dijalani dari rumah.</p>
+        <div class="field">
+          <label for="namaOrtu">Nama orang tua/wali</label>
+          <input id="namaOrtu" class="input" type="text" autocomplete="off" placeholder="Nama lengkap">
+        </div>
+        <label class="cek-setuju">
+          <input type="checkbox" id="setuju">
+          <span>Orang tua/wali sudah membaca dan menyetujui semua pilihan beserta urutannya.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Tab: Daftar tempat -->
+    <div id="panelDaftar" class="hidden">
+      <div class="alat">
+        <input id="cari" class="cari" type="search" placeholder="Cari nama perusahaan atau kecamatan…" autocomplete="off" aria-label="Cari perusahaan">
+        <div class="chips">
+          <button class="chip" id="fDekat" aria-pressed="false">Kecamatan saya</button>
+          <button class="chip" id="fPeluang" aria-pressed="false">Peluang besar</button>
+        </div>
+        <p class="catatan">Peluang dihitung dari skor Anda dibanding peminat lain saat ini. Bisa berubah selama pengisian masih dibuka.</p>
+      </div>
+      <div id="daftar" class="daftar"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Bar simpan -->
+<div id="bar" class="bar hidden">
+  <div class="bar-isi">
+    <div id="barStatus" class="bar-status"></div>
+    <button id="btnSimpan" class="btn btn-utama" type="button">Simpan Pilihan</button>
+  </div>
+</div>
+
+<div id="overlay" class="overlay hidden" role="status" aria-live="assertive">
+  <div id="overlayKotak" class="overlay-kotak">
+    <div class="spinner"></div>
+    <p id="overlayJudul">Memproses…</p>
+    <div id="overlayDetail" class="detail"></div>
+    <div id="overlayPercobaan" class="percobaan hidden"></div>
+  </div>
+</div>
+<div id="toast" class="toast" role="alert"></div>
+
+<script>
+/* ======================= KONFIGURASI ======================= */
+const SCRIPT_URL = 'PASTE_URL_WEB_APP_ANDA_DISINI';
+const NAMA_SEKOLAH = 'SMKN 1 Duduksampeyan';
+const MAKS_RETRY = 6;
+const BACKOFF_DASAR_MS = 800;
+const BACKOFF_MAKS_MS = 8000;
+const JITTER_MIN_MS = 1000, JITTER_MAKS_MS = 2500;
+const TIMEOUT_MS = 20000;
+
+/* ======================= STATE ======================= */
+const state = {
+  nisn: '', password: '', data: null,
+  draft: [], tersimpan: [], namaOrtuTersimpan: '',
+  tab: 'pilihan', filter: { dekat: false, peluang: false }
+};
+const $ = (id) => document.getElementById(id);
+$('namaSekolah').textContent = NAMA_SEKOLAH;
+
+/* ======================= UTIL ======================= */
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const tidur = (ms) => new Promise(r => setTimeout(r, ms));
+const acak = (a, b) => Math.floor(a + Math.random() * (b - a));
+const sama = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+const angkaID = (n) => Number(n).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+
+class RetryableError extends Error {}
+
+/** fetch dengan antrean otomatis: jitter acak + backoff eksponensial. */
+async function fetchWithRetry(url, options = {}, retries = MAKS_RETRY, backoff = BACKOFF_DASAR_MS) {
+  const { onRetry, ...fetchOpts } = options;
+  const total = retries + 1;
+  for (let ke = 1; ke <= total; ke++) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    try {
+      const res = await fetch(url, { redirect: 'follow', ...fetchOpts, signal: ctrl.signal });
+      if (res.status === 429 || res.status >= 500) throw new RetryableError('HTTP ' + res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      let data;
+      try { data = JSON.parse(await res.text()); } catch (e) { throw new RetryableError('Respons tidak valid'); }
+      if (data && data.status === 'busy') throw new RetryableError('busy');
+      return data;
+    } catch (err) {
+      const ulang = err instanceof RetryableError || err.name === 'AbortError' || err instanceof TypeError;
+      if (!ulang || ke >= total) {
+        const e = new Error(ulang ? 'Server masih padat.' : err.message);
+        e.habis = ulang; throw e;
+      }
+      const jeda = acak(JITTER_MIN_MS, JITTER_MAKS_MS) + acak(0, Math.min(backoff * 2 ** (ke - 1), BACKOFF_MAKS_MS));
+      if (onRetry) onRetry({ percobaanBerikut: ke + 1, total, jedaMs: jeda });
+      await tidur(jeda);
+    } finally { clearTimeout(t); }
+  }
+}
+
+function api(action, extra = {}, tampilRetry = true) {
+  return fetchWithRetry(SCRIPT_URL, {
+    method: 'POST',
+    // text/plain agar tidak memicu CORS preflight (didukung Apps Script)
+    body: JSON.stringify({ action, nisn: state.nisn, password: state.password, ...extra }),
+    onRetry: tampilRetry ? overlayRetry : null
+  });
+}
+
+/* ======================= OVERLAY & TOAST ======================= */
+let hitung;
+function tampilOverlay(judul, detail = '') {
+  clearInterval(hitung);
+  $('overlayKotak').classList.remove('padat');
+  $('overlayJudul').textContent = judul;
+  $('overlayDetail').textContent = detail;
+  $('overlayPercobaan').classList.add('hidden');
+  $('overlay').classList.remove('hidden');
+}
+function tutupOverlay() { clearInterval(hitung); $('overlay').classList.add('hidden'); }
+function overlayRetry({ percobaanBerikut, total, jedaMs }) {
+  $('overlay').classList.remove('hidden');
+  $('overlayKotak').classList.add('padat');
+  $('overlayJudul').textContent = 'Sistem sedang padat';
+  $('overlayPercobaan').textContent = `Percobaan ${percobaanBerikut}/${total}`;
+  $('overlayPercobaan').classList.remove('hidden');
+  let sisa = Math.ceil(jedaMs / 1000);
+  const tulis = () => $('overlayDetail').textContent = sisa > 0 ? `Mencoba menghubungkan kembali dalam antrean… (${sisa} detik)` : 'Menghubungkan kembali…';
+  clearInterval(hitung); tulis();
+  hitung = setInterval(() => { sisa--; tulis(); if (sisa <= 0) clearInterval(hitung); }, 1000);
+}
+let toastT;
+function toast(msg, jenis = '') {
+  const el = $('toast'); el.textContent = msg; el.className = 'toast tampil ' + jenis;
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('tampil'), 4500);
+}
+
+/* ======================= LOGIN ======================= */
+$('pwToggle').addEventListener('click', () => {
+  const pw = $('password'), lihat = pw.type === 'password';
+  pw.type = lihat ? 'text' : 'password';
+  $('pwToggle').textContent = lihat ? 'Sembunyikan' : 'Lihat';
+});
+
+$('formLogin').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nisn = $('nisn').value.trim();
+  const password = $('password').value.replace(/\D/g, '');
+  $('loginError').classList.add('hidden');
+  if (!nisn || !password) return errLogin('NISN dan password wajib diisi.');
+  if (password.length !== 8) return errLogin('Password harus 8 angka (DDMMYYYY).');
+
+  state.nisn = nisn; state.password = password;
+  $('btnMasuk').disabled = true;
+  tampilOverlay('Memeriksa data Anda…');
+  try {
+    const data = await api('getData');
+    if (data.status !== 'success') { state.nisn = state.password = ''; return errLogin(data.message); }
+    try { sessionStorage.setItem('pkl_sesi', JSON.stringify({ nisn, password })); } catch (e) {}
+    muatData(data, true);
+    masukDashboard();
+  } catch (err) {
+    state.nisn = state.password = '';
+    errLogin(err.habis ? 'Server sedang padat. Tunggu sebentar lalu coba lagi.' : 'Gagal terhubung. Periksa koneksi internet Anda.');
+  } finally { $('btnMasuk').disabled = false; tutupOverlay(); }
+});
+function errLogin(m) { $('loginError').textContent = m; $('loginError').classList.remove('hidden'); }
+
+$('btnKeluar').addEventListener('click', () => {
+  if (adaPerubahan() && !confirm('Ada perubahan yang belum disimpan. Tetap keluar?')) return;
+  if (!adaPerubahan() && !confirm('Keluar dari akun ini?')) return;
+  try { sessionStorage.removeItem('pkl_sesi'); } catch (e) {}
+  location.reload();
+});
+
+/* ======================= DATA ======================= */
+function muatData(data, timpaDraft) {
+  state.data = data;
+  state.tersimpan = data.pilihan.slice();
+  state.namaOrtuTersimpan = data.namaOrtu || '';
+  if (timpaDraft) {
+    state.draft = data.pilihan.slice();
+    $('namaOrtu').value = data.namaOrtu || '';
+    $('setuju').checked = data.pilihan.length > 0;
+  }
+  // buang pilihan yang perusahaannya sudah tidak ada
+  const ada = new Set(data.perusahaan.map(p => p.nama));
+  state.draft = state.draft.filter(n => ada.has(n));
+}
+const bisaEdit = () => state.data && state.data.periode.status === 'BUKA';
+const adaPerubahan = () => bisaEdit() && (
+  JSON.stringify(state.draft) !== JSON.stringify(state.tersimpan) ||
+  $('namaOrtu').value.trim() !== state.namaOrtuTersimpan);
+const cariP = (nama) => state.data.perusahaan.find(p => p.nama === nama);
+
+function masukDashboard() {
+  $('viewLogin').classList.add('hidden');
+  $('viewDashboard').classList.remove('hidden');
+  $('btnKeluar').classList.remove('hidden');
+  if (!state.draft.length && bisaEdit()) gantiTab('daftar');
+  renderSemua();
+}
+
+/* ======================= RENDER ======================= */
+function renderSemua() { renderKepala(); renderPilihan(); renderDaftar(); renderBar(); }
+
+function renderKepala() {
+  const { siswa, periode, hasil, keterangan } = state.data;
+  $('sapa').textContent = 'Halo, ' + (siswa.nama.split(' ')[0] || siswa.nama);
+  $('sapaSub').textContent = `${siswa.nama}, kelas ${siswa.kelas || '-'}, Kec. ${siswa.kecamatan || '-'}`;
+
+  let html = '';
+  if (periode.status === 'BUKA') {
+    html = `<div class="banner buka"><b>Pengisian pilihan sedang dibuka</b>Batas: ${esc(periode.batasWaktu)}. Isi ${periode.minPilihan}–${periode.maksPilihan} tempat berurutan. Pilihan masih bisa diubah sampai pengisian ditutup.</div>`;
+  } else if (periode.status === 'DIUMUMKAN') {
+    html = hasil
+      ? `<div class="banner hasil"><b>Tempat PKL Anda</b><div class="tempat">${esc(hasil)}</div>${esc(keterangan)}</div>`
+      : `<div class="banner manual"><b>Anda belum mendapat tempat dari pilihan Anda</b>${esc(keterangan || 'Guru pembimbing akan menghubungi Anda dan orang tua untuk penempatan.')}</div>`;
+  } else {
+    html = `<div class="banner tutup"><b>Pengisian ditutup</b>Pilihan Anda sudah terkunci. Tunggu pengumuman hasil dari sekolah.</div>`;
+  }
+  $('banner').innerHTML = html;
+
+  $('skorAngka').textContent = angkaID(siswa.skor);
+  const r = siswa.rincian, b = siswa.bobot;
+  $('rinciSkor').innerHTML = `
+    <span class="kepala">Komponen</span><span class="kepala">Nilai</span><span class="kepala">Bobot</span>
+    <span>Praktik</span><span>${angkaID(r.praktik)}</span><span>${b.praktik}%</span>
+    <span>Gambar Teknik</span><span>${angkaID(r.gambar)}</span><span>${b.gambar}%</span>
+    <span>Kehadiran</span><span>${angkaID(r.kehadiran)}</span><span>${b.kehadiran}%</span>
+    <span>Sikap</span><span>${angkaID(r.sikap)}</span><span>${b.sikap}%</span>`;
+
+  $('kotakPersetujuan').classList.toggle('hidden', !bisaEdit());
+}
+
+function renderPilihan() {
+  const { periode } = state.data;
+  const edit = bisaEdit();
+  const list = edit ? state.draft : state.tersimpan;
+  $('tabPilihan').textContent = `Pilihan Saya (${list.length})`;
+
+  if (!list.length) {
+    $('isiPilihan').innerHTML = edit
+      ? `<div class="kosong">Belum ada pilihan.<br>Tambahkan minimal ${periode.minPilihan} tempat dari daftar.<br><button class="btn btn-garis" type="button" data-aksi="ke-daftar">Buka Daftar Tempat</button></div>`
+      : `<div class="kosong">Anda tidak mengisi pilihan.</div>`;
+    return;
+  }
+
+  const items = list.map((nama, i) => {
+    const p = cariP(nama) || { kecamatan: '' };
+    const aksi = edit ? `
+      <div class="aksi">
+        <button class="ikon" data-aksi="naik" data-i="${i}" aria-label="Naikkan" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button class="ikon" data-aksi="turun" data-i="${i}" aria-label="Turunkan" ${i === list.length - 1 ? 'disabled' : ''}>↓</button>
+        <button class="ikon hapus" data-aksi="hapus" data-i="${i}" aria-label="Hapus">✕</button>
+      </div>` : '<div></div>';
+    return `<li class="item ${i === 0 ? 'pertama' : ''}">
+      <div class="nomor">${i + 1}</div>
+      <div><div class="nama">${esc(nama)}</div><div class="info">Kec. ${esc(p.kecamatan || '-')}</div></div>
+      ${aksi}</li>`;
+  }).join('');
+
+  const kurang = periode.minPilihan - list.length;
+  const progres = edit
+    ? `<p class="progres"><b>${list.length} dari maksimal ${periode.maksPilihan}.</b> ${kurang > 0 ? `Tambah ${kurang} lagi untuk bisa menyimpan.` : 'Urutan pertama adalah yang paling Anda inginkan.'}</p>`
+    : (state.data.waktuSimpan ? `<p class="progres">Terakhir disimpan ${esc(state.data.waktuSimpan)}, disetujui oleh ${esc(state.data.namaOrtu)}.</p>` : '');
+  $('isiPilihan').innerHTML = `<ol class="pilihan-list">${items}</ol>${progres}`;
+}
+
+function peluang(p) {
+  const posisi = p.diAtas + 1;
+  if (posisi <= p.kuota) return { kelas: 'besar', teks: `Peluang besar. Skor Anda di urutan ${posisi} dari ${p.peminat + 1} peminat, kuota ${p.kuota}.` };
+  if (posisi <= p.kuota * 2) return { kelas: 'bersaing', teks: `Bersaing. Skor Anda di urutan ${posisi} dari ${p.peminat + 1} peminat, kuota ${p.kuota}.` };
+  return { kelas: 'sulit', teks: `Sulit. Skor Anda di urutan ${posisi} dari ${p.peminat + 1} peminat, kuota ${p.kuota}. Siapkan pilihan cadangan.` };
+}
+
+function renderDaftar() {
+  const { siswa, periode, perusahaan } = state.data;
+  const edit = bisaEdit();
+  const kata = $('cari').value.trim().toLowerCase();
+  const f = state.filter;
+
+  const hasil = perusahaan.map((p, idx) => ({ ...p, idx }))
+    .filter(p => !kata || p.nama.toLowerCase().includes(kata) || p.kecamatan.toLowerCase().includes(kata))
+    .filter(p => !f.dekat || sama(p.kecamatan, siswa.kecamatan))
+    .filter(p => !f.peluang || p.diAtas + 1 <= p.kuota);
+
+  if (!hasil.length) { $('daftar').innerHTML = `<div class="kosong">Tidak ada tempat yang cocok dengan pencarian atau filter.</div>`; return; }
+
+  const penuh = state.draft.length >= periode.maksPilihan;
+  $('daftar').innerHTML = hasil.map(p => {
+    const urutan = state.draft.indexOf(p.nama);
+    const pl = peluang(p);
+    let tombol = '';
+    if (edit) {
+      if (urutan >= 0) tombol = `<button class="btn btn-garis" data-aksi="lepas" data-idx="${p.idx}">Pilihan ke-${urutan + 1}, lepaskan</button>`;
+      else tombol = `<button class="btn btn-utama" data-aksi="tambah" data-idx="${p.idx}" ${penuh ? 'disabled' : ''}>${penuh ? `Maksimal ${periode.maksPilihan} pilihan` : 'Tambah ke pilihan'}</button>`;
+    }
+    return `<article class="kartu ${urutan >= 0 ? 'dipilih' : ''}">
+      <h4>${esc(p.nama)}</h4>
+      <div class="lencana">
+        <span>Kec. ${esc(p.kecamatan || '-')}</span>
+        ${sama(p.kecamatan, siswa.kecamatan) ? '<span class="dekat">Sekecamatan</span>' : ''}
+      </div>
+      ${p.keterangan ? `<p class="desk">${esc(p.keterangan)}</p>` : ''}
+      <div class="statistik">
+        <div><b>${p.kuota}</b><small>Kuota</small></div>
+        <div><b>${p.peminat}</b><small>Peminat lain</small></div>
+        <div><b>${p.pilihan1}</b><small>Jadi pilihan 1</small></div>
+      </div>
+      <div class="peluang ${pl.kelas}">${pl.teks}</div>
+      ${tombol}
+    </article>`;
+  }).join('');
+}
+
+function renderBar() {
+  const edit = bisaEdit();
+  $('bar').classList.toggle('hidden', !edit);
+  if (!edit) return;
+  const kotor = adaPerubahan();
+  const el = $('barStatus');
+  el.className = 'bar-status' + (kotor ? ' kotor' : '');
+  el.innerHTML = kotor
+    ? '<b>Belum disimpan</b>Perubahan hanya tersimpan setelah Anda menekan Simpan.'
+    : (state.tersimpan.length ? `<b>Tersimpan</b>${esc(state.data.waktuSimpan)}` : '<b>Belum ada pilihan tersimpan</b>');
+  $('btnSimpan').disabled = !kotor;
+}
+
+/* ======================= INTERAKSI ======================= */
+function gantiTab(t) {
+  state.tab = t;
+  $('tabPilihan').setAttribute('aria-selected', t === 'pilihan');
+  $('tabDaftar').setAttribute('aria-selected', t === 'daftar');
+  $('panelPilihan').classList.toggle('hidden', t !== 'pilihan');
+  $('panelDaftar').classList.toggle('hidden', t !== 'daftar');
+}
+$('tabPilihan').addEventListener('click', () => gantiTab('pilihan'));
+$('tabDaftar').addEventListener('click', () => gantiTab('daftar'));
+
+function draftBerubah() {
+  $('setuju').checked = false; // urutan berubah: persetujuan harus diulang
+  renderPilihan(); renderDaftar(); renderBar();
+}
+
+$('isiPilihan').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-aksi]'); if (!b) return;
+  const i = Number(b.dataset.i), d = state.draft;
+  if (b.dataset.aksi === 'ke-daftar') return gantiTab('daftar');
+  if (b.dataset.aksi === 'naik' && i > 0) [d[i - 1], d[i]] = [d[i], d[i - 1]];
+  if (b.dataset.aksi === 'turun' && i < d.length - 1) [d[i + 1], d[i]] = [d[i], d[i + 1]];
+  if (b.dataset.aksi === 'hapus') d.splice(i, 1);
+  draftBerubah();
+});
+
+$('daftar').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-aksi]'); if (!b) return;
+  const p = state.data.perusahaan[Number(b.dataset.idx)]; if (!p) return;
+  if (b.dataset.aksi === 'tambah' && !state.draft.includes(p.nama) && state.draft.length < state.data.periode.maksPilihan) {
+    state.draft.push(p.nama);
+    toast(`Ditambahkan sebagai pilihan ke-${state.draft.length}.`);
+  }
+  if (b.dataset.aksi === 'lepas') state.draft = state.draft.filter(n => n !== p.nama);
+  draftBerubah();
+});
+
+$('cari').addEventListener('input', renderDaftar);
+[['fDekat', 'dekat'], ['fPeluang', 'peluang']].forEach(([id, k]) => {
+  $(id).addEventListener('click', () => {
+    state.filter[k] = !state.filter[k];
+    $(id).setAttribute('aria-pressed', state.filter[k]);
+    renderDaftar();
+  });
+});
+$('namaOrtu').addEventListener('input', renderBar);
+$('setuju').addEventListener('change', renderBar);
+
+$('btnSimpan').addEventListener('click', async () => {
+  const { minPilihan } = state.data.periode;
+  if (state.draft.length < minPilihan) { gantiTab('pilihan'); return toast(`Isi minimal ${minPilihan} pilihan.`, 'gagal'); }
+  if ($('namaOrtu').value.trim().length < 3) { gantiTab('pilihan'); $('namaOrtu').focus(); return toast('Isi nama orang tua/wali.', 'gagal'); }
+  if (!$('setuju').checked) { gantiTab('pilihan'); $('setuju').focus(); return toast('Centang persetujuan orang tua/wali.', 'gagal'); }
+
+  const ringkas = state.draft.map((n, i) => `${i + 1}. ${n}`).join('\n');
+  if (!confirm(`Simpan urutan pilihan berikut?\n\n${ringkas}\n\nAnda masih bisa mengubahnya selama pengisian dibuka.`)) return;
+
+  tampilOverlay('Menyimpan pilihan Anda…');
+  try {
+    const res = await api('simpan', { pilihan: state.draft, namaOrtu: $('namaOrtu').value.trim(), setuju: true });
+    if (res.status !== 'success') { toast(res.message || 'Gagal menyimpan.', 'gagal'); return; }
+    toast('Pilihan tersimpan.', 'sukses');
+    const data = await api('getData', {}, false).catch(() => null);
+    if (data && data.status === 'success') muatData(data, true);
+    else { state.tersimpan = state.draft.slice(); state.namaOrtuTersimpan = $('namaOrtu').value.trim(); state.data.waktuSimpan = res.waktuSimpan; }
+    renderSemua();
+  } catch (err) {
+    toast(err.habis ? 'Server masih padat. Tekan Simpan lagi sebentar.' : 'Koneksi terputus. Tekan Simpan lagi.', 'gagal');
+  } finally { tutupOverlay(); }
+});
+
+window.addEventListener('beforeunload', (e) => { if (adaPerubahan()) { e.preventDefault(); e.returnValue = ''; } });
+
+/* Perbarui statistik peminat saat tab dibuka kembali */
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible' || !state.nisn || !state.data) return;
+  await tidur(acak(0, 3000));
+  try {
+    const data = await api('getData', {}, false);
+    if (data.status === 'success') {
+      const draft = state.draft.slice();
+      muatData(data, false);
+      if (!bisaEdit()) state.draft = data.pilihan.slice(); else state.draft = draft.filter(n => data.perusahaan.some(p => p.nama === n));
+      renderSemua();
+    }
+  } catch (e) {}
+});
+
+/* Pulihkan sesi setelah muat ulang */
+(async function () {
+  let s = null;
+  try { s = JSON.parse(sessionStorage.getItem('pkl_sesi') || 'null'); } catch (e) {}
+  if (!s || !s.nisn) return;
+  state.nisn = s.nisn; state.password = s.password;
+  tampilOverlay('Memuat data Anda…');
+  try {
+    const data = await api('getData');
+    if (data.status === 'success') { muatData(data, true); masukDashboard(); }
+    else { state.nisn = state.password = ''; sessionStorage.removeItem('pkl_sesi'); }
+  } catch (e) { state.nisn = state.password = ''; toast('Server sedang padat. Silakan masuk kembali.', 'gagal'); }
+  finally { tutupOverlay(); }
+})();
+</script>
+</body>
+</html>
